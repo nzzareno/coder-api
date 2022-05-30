@@ -1,5 +1,27 @@
 let socket = io();
 
+const msg = document.querySelector("#msg");
+const btnChat = document.querySelector("#chatBtn");
+const chat = document.querySelector("#chat");
+const email = document.querySelector("#email");
+const form = document.querySelector("#form");
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const payload = {
+    email: email.value,
+    msg: msg.value,
+    date: new Date().toLocaleString(),
+  };
+  if (payload.msg.trim().length > 0) {
+    socket.emit("chat", payload, (cb) => {
+      console.log(cb);
+    });
+  } else {
+    alert("Message is required");
+  }
+});
+
 socket.on("new-products", () => {
   fetch("api/productos")
     .then((response) => {
@@ -61,17 +83,13 @@ socket.on("new-products", () => {
     });
 });
 
-document.querySelector("form").addEventListener("input", function (e) {
-  const tgt = e.target;
-  if (tgt.type && tgt.type === "number") {
-    const val = tgt.value;
-    const nums = val.replace(/[^\d.-]/g, "");
-    if (!/\d+/.test(val)) tgt.value = "";
+socket.on("chat", (payload) => {
+  if (payload.email !== "" && payload.msg !== "") {
+    let li = document.createElement("li");
+    li.classList.add("list-group-item");
+    li.innerHTML = `<strong style="color: blue;">${payload.email}</strong> <span class="text-muted" style="color: brown;">${payload.date}:</span>
+  <p style="font-style: italic; color: green; font-weight: 500;">${payload.msg}</p> 
+  `;
+    chat.appendChild(li);
   }
-  const showButton = document.getElementById("button-show");
-  showButton.addEventListener("click", function () {});
 });
-
-if (window.history.replaceState) {
-  window.history.replaceState(null, null, window.location.href);
-}

@@ -11,7 +11,6 @@ const nanoid = customAlphabet("1234567890", 5);
 const productosRouter = require("./routes/productosRouter");
 require("dotenv").config();
 
-
 app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(express.static(path.join(__dirname, "public")));
@@ -37,7 +36,6 @@ app.get("/:id", (req, res) => {
     });
   });
 });
-
 
 app.post("/", async (req, res) => {
   fs.readFile("productos.txt", "utf-8")
@@ -66,12 +64,45 @@ app.post("/", async (req, res) => {
     });
 });
 
+// app.post("/", async (req, res) => {
+//   fs.readFile("chat.txt", "utf-8").then((data) => {
+//     const type = JSON.parse(data);
+//     const newChat = {
+//       email: req.body.email,
+//       msg: req.body.msg,
+//       date: req.body.date,
+//     };
+//     type.push(newChat);
+//     fs.writeFile("chat.txt", JSON.stringify(type));
+//     res.render("form", {
+//       type,
+//     });
+//   });
+// });
 
-io.on("connection", (socket) => {
-  console.log("Nueva conexión");
+io.on("connection", async (socket) => {
+  console.log("New connection");
   const fs = require("fs");
-  const type = JSON.parse(fs.readFileSync("productos.txt"));
+  const type = await JSON.parse(fs.readFileSync("productos.txt"));
   socket.emit("new-products", type);
+
+  socket.on("chat", async (payload, cb) => {
+    const fs = require("fs");
+    const type = JSON.parse(fs.readFileSync("chat.txt"));
+    const newChat = {
+      msg: payload.msg,
+      email: payload.email,
+      date: payload.date,
+    };
+    type.push(newChat);
+    fs.writeFile("chat.txt", JSON.stringify(type), (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+    cb(newChat);
+    io.emit("chat", newChat);
+  });
 });
 
 const port = process.env.PORT || 8080;

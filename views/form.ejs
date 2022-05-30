@@ -47,14 +47,13 @@
     >
       WELCOME, FEEL FREE TO ENTER YOUR PRODUCT!
     </h1>
-  
-    
+
     <form action="/" method="POST">
       <div class="mb-3">
         <input
           type="text"
           placeholder="What is your product?"
-          class="form-control"
+          class="form-control shadow-none"
           id="title"
           name="title"
           required
@@ -64,7 +63,7 @@
         <input
           type="number"
           placeholder="Price"
-          class="form-control"
+          class="form-control shadow-none"
           id="price"
           name="price"
           required
@@ -75,7 +74,7 @@
           type="url"
           placeholder="Image URL"
           name="thumbnail"
-          class="form-control"
+          class="form-control shadow-none text-dark"
           id="thumbnail"
           required
         />
@@ -92,11 +91,13 @@
         SEND TO LIST
       </button>
     </form>
-    <%- include ('chat') %>
+
     <table class="table mt-5 container">
       <thead class="table-warning"></thead>
       <tbody></tbody>
     </table>
+    <hr />
+    <%- include ('chat') %>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
@@ -104,5 +105,6 @@
     ></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="./socket.js"></script>
+    <script src="./restart.js"></script>
   </body>
 </html>

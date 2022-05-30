@@ -1,12 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <h1>IAM CHAT</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body class="container">
+    <div class="bg-light">
+      <h3 class="text-dark ms-2 fs-4">MESSAGE CENTER</h3>
+      <div class="text-center">
+        <form id="form" action="/" method="POST">
+          <input
+            style="outline: none; border: none"
+            class="form-control shadow-none text-dark bg-white mb-3 w-100"
+            type="email"
+            maxlength="150"
+            required
+            name="email"
+            placeholder="Enter your email"
+            id="email"
+          />
+
+          <input
+            style="outline: none; border: none"
+            class="form-control shadow-none text-dark bg-white mb-3 w-100"
+            type="text"
+            maxlength="314"
+            name="msg"
+            placeholder="Type you message here..."
+            id="msg"
+            required
+          />
+          <button
+            style="font-weight: bold"
+            type="submit"
+            class="btn w-25 btn-success"
+            name="chatBtn"
+            id="chatBtn"
+          >
+            SEND
+          </button>
+        </form>
+      </div>
+      <div>
+        <ul class="text-dark" id="chat" style="font-weight: bold"></ul>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </body>
 </html>
