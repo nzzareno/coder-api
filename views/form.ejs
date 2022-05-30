@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=10" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+    <title>MVC EJS products</title>
+    <style>
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+      .container {
+        margin-top: 277px;
+      }
+
+      @media screen and (max-width: 940px) {
+        .container {
+          margin-top: 0;
+        }
+        h1 {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="container-fluid">
+    <h1
+      style="
+        font-family: arial;
+        font-weight: 700;
+        line-height: 60px;
+        height: 60px;
+        text-align: center;
+      "
+      class="mb-4 bg-dark text-white"
+    >
+      WELCOME, FEEL FREE TO ENTER YOUR PRODUCT!
+    </h1>
+  
+    
+    <form action="/" method="POST">
+      <div class="mb-3">
+        <input
+          type="text"
+          placeholder="What is your product?"
+          class="form-control"
+          id="title"
+          name="title"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <input
+          type="number"
+          placeholder="Price"
+          class="form-control"
+          id="price"
+          name="price"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <input
+          type="url"
+          placeholder="Image URL"
+          name="thumbnail"
+          class="form-control"
+          id="thumbnail"
+          required
+        />
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+        <label class="form-check-label" for="exampleCheck1">Featured</label>
+      </div>
+      <button
+        style="height: 65px; font-weight: 700"
+        class="btn btn-light border w-100 fs-3"
+        type="submit"
+      >
+        SEND TO LIST
+      </button>
+    </form>
+    <%- include ('chat') %>
+    <table class="table mt-5 container">
+      <thead class="table-warning"></thead>
+      <tbody></tbody>
+    </table>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./socket.js"></script>
+  </body>
+</html>
