@@ -26,15 +26,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// app.get("/chat", (req, res) => {
-//   fs.readFile("chat.txt", "utf-8").then((data) => {
-//     const datos = JSON.parse(data);
-//     res.render("form", {
-//       datos,
-//     });
-//   });
-// });
-
 app.get("/:id", (req, res) => {
   fs.readFile("productos.txt", "utf-8").then((data) => {
     const type = JSON.parse(data);
@@ -55,9 +46,7 @@ app.post("/", async (req, res) => {
     thumbnail: req.body.thumbnail,
   };
   producto.push(newProducto);
-
   await fs.writeFile("productos.txt", JSON.stringify(producto));
-
   res.render("form", {
     productos: producto,
   });
@@ -76,7 +65,7 @@ io.on("connection", async (socket) => {
         console.log(err);
       }
     });
-    socket.emit("chat", payload);
+    io.emit("chat", payload);
   });
   socket.emit("chat", await JSON.parse(fs.readFileSync("chat.txt")));
 });

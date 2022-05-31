@@ -5,12 +5,14 @@ const btnChat = document.querySelector("#chatBtn");
 const chat = document.querySelector("#chat");
 const email = document.querySelector("#email");
 const form = document.querySelector("#form");
+const formx = document.querySelector("#formx");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   if (email.value === "" || msg.value === "") {
     alert("Email and message are required");
   } else {
+    console.log(socket.io);
     socket.emit("chat", {
       email: email.value,
       msg: msg.value,
@@ -29,7 +31,7 @@ socket.on("new-products", () => {
       if (data.length < 1) {
         return (document.querySelector(
           "tbody"
-        ).innerHTML = `<h1 class='text-center'>Start adding some products to view the collection...</h1>`);
+        ).innerHTML = `<h2 class='text-center bg-warning'>Start adding some products to view the collection...</h2>`);
       } else {
         let tbody = document.querySelector("tbody");
         let thead = document.querySelector("thead");
@@ -87,27 +89,18 @@ socket.on("chat", () => {
       return response.json();
     })
     .then((data) => {
-      let correo;
-      let mensaje;
-      let fecha;
+      chat.innerHTML = "";
       data.forEach((dato) => {
-        correo = dato.email;
-        mensaje = dato.msg;
-        fecha = dato.date;
-        chat.innerHTML += `<div class="card">
-          <div class="card-header">
-            <h5 class="card-title text-primary">${correo}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">${fecha}</h6>
-          </div>
-          <div class="card-body">
-            <p class="card-text text-warning">${mensaje}</p>
-          </div>
+        return (chat.innerHTML += `<div class="card">
+        <div class="card-header bg-light">
+          <h5 class="card-title text-primary">${dato.email}</h5>
+          <h6 class="card-subtitle bg-light text-success mb-2  ">${dato.date}</h6>
         </div>
-        <br>
-        `;
+        <div class="card-body bg-dark">
+          <p class="card-text text-warning bg-dark">${dato.msg}</p>
+        </div>
+      </div>
+      <br>`);
       });
-    })
-    .catch((error) => {
-      console.log(error);
     });
 });

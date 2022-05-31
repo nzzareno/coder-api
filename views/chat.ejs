@@ -5,15 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      .divchat {
+        width: 100%;
+        height: 56.7vh;
+ 
+        overflow: auto;
+        margin-top: 7%;
+       
+      }
+    </style>
   </head>
-  <body class="container">
-    <div class="bg-light">
-      <h3 class="text-dark ms-2 fs-4">MESSAGE CENTER</h3>
-      <div class="text-center">
+  <body class="container" style="min-height: 100vh;">
+    <div class=" bg-light divchat">
+      <h2 class="text-dark  bg-light ms-2 fs-2">MESSAGE CENTER</h2>
+      <div class="text-center bg-light">
         <form action="/" method="POST" id="form">
           <input
             style="outline: none; border: none"
-            class="form-control shadow-none text-dark bg-white mb-3 w-100"
+            class="form-control shadow-none fs-4 text-dark bg-light mb-3 w-100"
             type="email"
             maxlength="150"
             required
@@ -24,7 +34,7 @@
 
           <input
             style="outline: none; border: none"
-            class="form-control shadow-none text-dark bg-white mb-3 w-100"
+            class="form-control shadow-none fs-4 text-dark bg-light mb-3 w-100"
             type="text"
             maxlength="314"
             name="msg"
@@ -35,7 +45,7 @@
           <button
             style="font-weight: bold"
             type="submit"
-            class="btn w-25 btn-success"
+            class="btn w-25 fs-3 btn-success"
             name="chatBtn"
             id="chatBtn"
           >
@@ -45,7 +55,7 @@
         <br />
       </div>
       <div>
-        <ul class="text-dark" id="chat" style="font-weight: bold"></ul>
+        <ul class="text-dark" id="chat" style="font-weight: bold; margin-top:3%;"></ul>
       </div>
     </div>
     <script
