@@ -14,9 +14,8 @@ form.addEventListener("submit", (e) => {
     date: new Date().toLocaleString(),
   };
   if (payload.msg.trim().length > 0) {
-    socket.emit("chat", payload, (cb) => {
-      console.log(cb);
-    });
+    socket.emit("chat", payload);
+    msg.value = "";
   } else {
     alert("Message is required");
   }
@@ -84,12 +83,18 @@ socket.on("new-products", () => {
 });
 
 socket.on("chat", (payload) => {
-  if (payload.email !== "" && payload.msg !== "") {
-    let li = document.createElement("li");
-    li.classList.add("list-group-item");
-    li.innerHTML = `<strong style="color: blue;">${payload.email}</strong> <span class="text-muted" style="color: brown;">${payload.date}:</span>
-  <p style="font-style: italic; color: green; font-weight: 500;">${payload.msg}</p> 
-  `;
-    chat.appendChild(li);
-  }
+  let correo;
+  let mensajito;
+  let fecha;
+  payload.map(({ email, msg, date }) => {
+    correo = email;
+    mensajito = msg;
+    fecha = date;
+  });
+  let li = document.createElement("li");
+  li.classList.add("list-group-item");
+  li.innerHTML = `<strong style="color: blue;">${correo}</strong> <span class="text-muted" style="color: brown;">${fecha}:</span>
+  <p style="font-style: italic; color: green; font-weight: 500;">${mensajito}</p> 
+`;
+  chat.appendChild(li);
 });

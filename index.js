@@ -64,44 +64,28 @@ app.post("/", async (req, res) => {
     });
 });
 
-// app.post("/", async (req, res) => {
-//   fs.readFile("chat.txt", "utf-8").then((data) => {
-//     const type = JSON.parse(data);
-//     const newChat = {
-//       email: req.body.email,
-//       msg: req.body.msg,
-//       date: req.body.date,
-//     };
-//     type.push(newChat);
-//     fs.writeFile("chat.txt", JSON.stringify(type));
-//     res.render("form", {
-//       type,
-//     });
-//   });
-// });
-
 io.on("connection", async (socket) => {
   console.log("New connection");
   const fs = require("fs");
   const type = await JSON.parse(fs.readFileSync("productos.txt"));
   socket.emit("new-products", type);
 
-  socket.on("chat", async (payload, cb) => {
+  socket.on("chat", async (payload) => {
     const fs = require("fs");
-    const type = JSON.parse(fs.readFileSync("chat.txt"));
-    const newChat = {
-      msg: payload.msg,
-      email: payload.email,
-      date: payload.date,
-    };
-    type.push(newChat);
+    const type = await JSON.parse(fs.readFileSync("chat.txt"));
+    type.push(payload);
     fs.writeFile("chat.txt", JSON.stringify(type), (err) => {
       if (err) {
         console.log(err);
       }
+      fs.readFile("chat.txt", "utf-8", async (err, data) => {
+        if (err) {
+          console.log(err);
+        }
+        const msj = await JSON.parse(data);
+        io.emit("chat", msj);
+      });
     });
-    cb(newChat);
-    io.emit("chat", newChat);
   });
 });
 
