@@ -87,18 +87,15 @@ socket.on("chat", () => {
       return response.json();
     })
     .then((data) => {
-      if (data.length < 1) {
-        return (chat.innerHTML = `<h1 class='text-center'>Start chatting...</h1>`);
-      } else {
-        let correo;
-        let mensaje;
-        let fecha;
-        data.forEach(({ email, msg, date }) => {
-          correo = email;
-          mensaje = msg;
-          fecha = date;
+      let correo;
+      let mensaje;
+      let fecha;
+      data.forEach(({ email, msg, date }) => {
+        correo = email;
+        mensaje = msg;
+        fecha = date;
 
-          chat.innerHTML += `<div class="card">
+        chat.innerHTML += `<div class="card">
           <div class="card-header">
             <h5 class="card-title text-primary">${correo}</h5>
             <h6 class="card-subtitle mb-2 text-muted">${fecha}</h6>
@@ -109,8 +106,7 @@ socket.on("chat", () => {
         </div>
         <br>
         `;
-        });
-      }
+      });
     })
     .catch((error) => {
       console.log(error);
