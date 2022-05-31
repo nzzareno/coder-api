@@ -9,6 +9,7 @@ const path = require("path");
 const { customAlphabet } = require("nanoid");
 const nanoid = customAlphabet("1234567890", 5);
 const productosRouter = require("./routes/productosRouter");
+const chatRouter = require("./routes/chatRouter");
 require("dotenv").config();
 
 app.set("view engine", "ejs");
@@ -17,12 +18,22 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/productos", productosRouter);
+app.use(chatRouter);
 
 app.get("/", (req, res) => {
   fs.readFile("productos.txt", "utf-8").then((data) => {
     const type = JSON.parse(data);
     res.render("form", {
       type,
+    });
+  });
+});
+
+app.get("/chat", (req, res) => {
+  fs.readFile("chat.txt", "utf-8").then((data) => {
+    const datos = JSON.parse(data);
+    res.render("form", {
+      datos,
     });
   });
 });
@@ -64,6 +75,36 @@ app.post("/", async (req, res) => {
     });
 });
 
+app.post("/chat", async (req, res) => {
+  fs.readFile("chat.txt", "utf-8")
+    .then((data) => {
+      const datos = JSON.parse(data);
+      const newMsj = {
+        email: Number(req.body.email),
+        msg: req.body.msg,
+        date: req.body.date,
+      };
+      datos.push(newMsj);
+      fs.writeFile("chat.txt", JSON.stringify(datos));
+      res.render("form", {
+        datos,
+      });
+    })
+    .catch((err) => {
+      if (err) {
+        res.status(400).json({
+          error: "Bad Request",
+          message: "Email and message are required",
+        });
+      }
+    });
+});
+
+// app.post("/chat", (req,res) => {
+//   io.emit("chat", req.body.msg);
+//   res.json({message: req.body.msg});
+// })
+
 io.on("connection", async (socket) => {
   console.log("New connection");
   const fs = require("fs");
@@ -83,7 +124,7 @@ io.on("connection", async (socket) => {
             console.log(err);
           }
           const msj = await JSON.parse(data);
-          io.emit("chat", msj);
+          return io.emit("chat", msj);
         });
       }
     });

@@ -20,15 +20,6 @@ class Productos {
     await fs.writeFile(this.txtNameFile, type);
   }
 
-  // async obtenerMensajes() {
-  //   try {
-  //     const chat = await this.fileInJSON();
-  //     return chat;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
   async obtenerProductos() {
     try {
       const productos = await this.fileInJSON();
@@ -66,22 +57,6 @@ class Productos {
     }
   }
 
-  // async createMsg(data) {
-  //   try {
-  //     const chat = await this.fileInJSON();
-  //     const newMsg = {
-  //       email: data.email,
-  //       msg: data.msg,
-  //       date: data.date,
-  //     };
-  //     chat.push(newMsg);
-  //     await this.fileSaving(chat);
-  //     return newMsg;
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
   async eliminarProducto(id) {
     try {
       const productos = await this.fileInJSON();
@@ -101,14 +76,6 @@ class Productos {
       console.log(error);
     }
   }
-
-  // async eliminarTodosMsg() {
-  //   try {
-  //     await this.fileSaving([]);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   async actualizarTodos() {
     try {
