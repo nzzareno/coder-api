@@ -22,16 +22,7 @@ app.use("/api/chat", chatRouter);
 
 app.get("/", (req, res) => {
   fs.readFile("productos.txt", "utf-8").then((productos) => {
-    fs.readFile("chat.txt", "utf-8")
-      .then((chat) => {
-        res.render("form", {
-          productos: JSON.parse(productos),
-          chat: JSON.parse(chat),
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    res.render("form", { productos: JSON.parse(productos) });
   });
 });
 
@@ -84,8 +75,8 @@ io.on("connection", async (socket) => {
       if (err) {
         console.log(err);
       }
-      socket.broadcast.emit("chat", payload);
     });
+    socket.emit("chat", payload);
   });
   socket.emit("chat", await JSON.parse(fs.readFileSync("chat.txt")));
 });
