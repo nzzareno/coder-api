@@ -8,17 +8,12 @@ const form = document.querySelector("#form");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const payload = {
+  socket.emit("chat", {
     email: email.value,
     msg: msg.value,
     date: new Date().toLocaleString(),
-  };
-  if (payload.msg.trim().length > 0) {
-    socket.emit("chat", payload);
-    msg.value = "";
-  } else {
-    alert("Message is required");
-  }
+  });
+  msg.value = "";
 });
 
 socket.on("new-products", () => {

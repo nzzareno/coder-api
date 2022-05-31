@@ -77,14 +77,15 @@ io.on("connection", async (socket) => {
     fs.writeFile("chat.txt", JSON.stringify(type), (err) => {
       if (err) {
         console.log(err);
+      } else {
+        fs.readFile("chat.txt", "utf-8", async (err, data) => {
+          if (err) {
+            console.log(err);
+          }
+          const msj = await JSON.parse(data);
+          io.emit("chat", msj);
+        });
       }
-      fs.readFile("chat.txt", "utf-8", async (err, data) => {
-        if (err) {
-          console.log(err);
-        }
-        const msj = await JSON.parse(data);
-        io.emit("chat", msj);
-      });
     });
   });
 });
