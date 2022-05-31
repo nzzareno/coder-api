@@ -87,9 +87,6 @@ socket.on("chat", () => {
       return response.json();
     })
     .then((data) => {
-      let correo;
-      let mensaje;
-      let fecha;
       data.forEach(({ email, msg, date }) => {
         correo = email;
         mensaje = msg;
@@ -107,8 +104,5 @@ socket.on("chat", () => {
         <br>
         `;
       });
-    })
-    .catch((error) => {
-      console.log(error);
     });
 });

@@ -92,10 +92,9 @@ io.on("connection", async (socket) => {
       if (err) {
         console.log(err);
       }
-      socket.emit("chat", type);
+      socket.broadcast.emit("chat", type);
+      // PROBLEMA RENDERIZADO DOBLE
     });
-
-
   });
   socket.emit("chat", await JSON.parse(fs.readFileSync("chat.txt")));
 });
