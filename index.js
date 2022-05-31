@@ -56,9 +56,7 @@ app.get("/:id", (req, res) => {
 
 app.post("/", async (req, res) => {
   const productos = await fs.readFile("productos.txt", "utf-8");
-  const chat = await fs.readFile("chat.txt", "utf-8");
   const producto = JSON.parse(productos);
-  const chatData = JSON.parse(chat);
   const newProducto = {
     id: nanoid(),
     price: req.body.price,
@@ -66,17 +64,11 @@ app.post("/", async (req, res) => {
     thumbnail: req.body.thumbnail,
   };
   producto.push(newProducto);
-  const newChat = {
-    email: req.body.email,
-    msg: req.body.msg,
-    date: req.body.date,
-  };
-  chatData.push(newChat);
-  const items = await fs.writeFile("productos.txt", JSON.stringify(producto));
-  const chatDato = await fs.writeFile("chat.txt", JSON.stringify(chatData));
+
+  await fs.writeFile("productos.txt", JSON.stringify(producto));
+
   res.render("form", {
-    items,
-    chatDato,
+    productos: producto,
   });
 });
 
@@ -92,8 +84,7 @@ io.on("connection", async (socket) => {
       if (err) {
         console.log(err);
       }
-      socket.broadcast.emit("chat", type);
-      // PROBLEMA RENDERIZADO DOBLE
+      socket.broadcast.emit("chat", payload);
     });
   });
   socket.emit("chat", await JSON.parse(fs.readFileSync("chat.txt")));

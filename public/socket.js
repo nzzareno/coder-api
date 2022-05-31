@@ -87,11 +87,13 @@ socket.on("chat", () => {
       return response.json();
     })
     .then((data) => {
-      data.forEach(({ email, msg, date }) => {
-        correo = email;
-        mensaje = msg;
-        fecha = date;
-
+      let correo;
+      let mensaje;
+      let fecha;
+      data.forEach((dato) => {
+        correo = dato.email;
+        mensaje = dato.msg;
+        fecha = dato.date;
         chat.innerHTML += `<div class="card">
           <div class="card-header">
             <h5 class="card-title text-primary">${correo}</h5>
@@ -104,5 +106,8 @@ socket.on("chat", () => {
         <br>
         `;
       });
+    })
+    .catch((error) => {
+      console.log(error);
     });
 });

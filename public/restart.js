@@ -1,4 +1,4 @@
-document.querySelector("form").addEventListener("input", function (e) {
+document.querySelector("#formx").addEventListener("input", function (e) {
   const tgt = e.target;
   if (tgt.type && tgt.type === "number") {
     const val = tgt.value;
