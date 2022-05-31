@@ -8,12 +8,16 @@ const form = document.querySelector("#form");
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  socket.emit("chat", {
-    email: email.value,
-    msg: msg.value,
-    date: new Date().toLocaleString(),
-  });
-  msg.value = "";
+  if (email.value === "" || msg.value === "") {
+    alert("Email and message are required");
+  } else {
+    socket.emit("chat", {
+      email: email.value,
+      msg: msg.value,
+      date: new Date().toLocaleString(),
+    });
+    msg.value = "";
+  }
 });
 
 socket.on("new-products", () => {
@@ -77,19 +81,38 @@ socket.on("new-products", () => {
     });
 });
 
-socket.on("chat", (payload) => {
-  let correo;
-  let mensajito;
-  let fecha;
-  payload.map(({ email, msg, date }) => {
-    correo = email;
-    mensajito = msg;
-    fecha = date;
-  });
-  let li = document.createElement("li");
-  li.classList.add("list-group-item");
-  li.innerHTML = `<strong style="color: blue;">${correo}</strong> <span class="text-muted" style="color: brown;">${fecha}:</span>
-  <p style="font-style: italic; color: green; font-weight: 500;">${mensajito}</p> 
-`;
-  chat.appendChild(li);
+socket.on("chat", () => {
+  fetch("api/chat")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      if (data.length < 1) {
+        return (chat.innerHTML = `<h1 class='text-center'>Start chatting...</h1>`);
+      } else {
+        let correo;
+        let mensaje;
+        let fecha;
+        data.forEach(({ email, msg, date }) => {
+          correo = email;
+          mensaje = msg;
+          fecha = date;
+
+          chat.innerHTML += `<div class="card">
+          <div class="card-header">
+            <h5 class="card-title text-primary">${correo}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">${fecha}</h6>
+          </div>
+          <div class="card-body">
+            <p class="card-text text-warning">${mensaje}</p>
+          </div>
+        </div>
+        <br>
+        `;
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });

@@ -18,25 +18,31 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/productos", productosRouter);
-app.use(chatRouter);
+app.use("/api/chat", chatRouter);
 
 app.get("/", (req, res) => {
-  fs.readFile("productos.txt", "utf-8").then((data) => {
-    const type = JSON.parse(data);
-    res.render("form", {
-      type,
-    });
+  fs.readFile("productos.txt", "utf-8").then((productos) => {
+    fs.readFile("chat.txt", "utf-8")
+      .then((chat) => {
+        res.render("form", {
+          productos: JSON.parse(productos),
+          chat: JSON.parse(chat),
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   });
 });
 
-app.get("/chat", (req, res) => {
-  fs.readFile("chat.txt", "utf-8").then((data) => {
-    const datos = JSON.parse(data);
-    res.render("form", {
-      datos,
-    });
-  });
-});
+// app.get("/chat", (req, res) => {
+//   fs.readFile("chat.txt", "utf-8").then((data) => {
+//     const datos = JSON.parse(data);
+//     res.render("form", {
+//       datos,
+//     });
+//   });
+// });
 
 app.get("/:id", (req, res) => {
   fs.readFile("productos.txt", "utf-8").then((data) => {
@@ -49,86 +55,49 @@ app.get("/:id", (req, res) => {
 });
 
 app.post("/", async (req, res) => {
-  fs.readFile("productos.txt", "utf-8")
-    .then((data) => {
-      const type = JSON.parse(data);
-      const newProduct = {
-        id: Number(nanoid()),
-        price: Number(req.body.price),
-        title: req.body.title,
-        thumbnail: req.body.thumbnail,
-      };
-      type.push(newProduct);
-      fs.writeFile("productos.txt", JSON.stringify(type));
-      res.render("form", {
-        type,
-      });
-    })
-    .catch((err) => {
-      if (!req.body.title && !req.body.price && !req.body.thumbnail) {
-        res.status(400).json({
-          error: "Bad Request",
-          message: "Title, price and thumbnail are required",
-        });
-      }
-      console.log(err);
-    });
+  const productos = await fs.readFile("productos.txt", "utf-8");
+  const chat = await fs.readFile("chat.txt", "utf-8");
+  const producto = JSON.parse(productos);
+  const chatData = JSON.parse(chat);
+  const newProducto = {
+    id: nanoid(),
+    price: req.body.price,
+    title: req.body.title,
+    thumbnail: req.body.thumbnail,
+  };
+  producto.push(newProducto);
+  const newChat = {
+    email: req.body.email,
+    msg: req.body.msg,
+    date: req.body.date,
+  };
+  chatData.push(newChat);
+  const items = await fs.writeFile("productos.txt", JSON.stringify(producto));
+  const chatDato = await fs.writeFile("chat.txt", JSON.stringify(chatData));
+  res.render("form", {
+    items,
+    chatDato,
+  });
 });
-
-app.post("/chat", async (req, res) => {
-  fs.readFile("chat.txt", "utf-8")
-    .then((data) => {
-      const datos = JSON.parse(data);
-      const newMsj = {
-        email: Number(req.body.email),
-        msg: req.body.msg,
-        date: req.body.date,
-      };
-      datos.push(newMsj);
-      fs.writeFile("chat.txt", JSON.stringify(datos));
-      res.render("form", {
-        datos,
-      });
-    })
-    .catch((err) => {
-      if (err) {
-        res.status(400).json({
-          error: "Bad Request",
-          message: "Email and message are required",
-        });
-      }
-    });
-});
-
-// app.post("/chat", (req,res) => {
-//   io.emit("chat", req.body.msg);
-//   res.json({message: req.body.msg});
-// })
 
 io.on("connection", async (socket) => {
-  console.log("New connection");
   const fs = require("fs");
   const type = await JSON.parse(fs.readFileSync("productos.txt"));
   socket.emit("new-products", type);
-
   socket.on("chat", async (payload) => {
     const fs = require("fs");
     const type = await JSON.parse(fs.readFileSync("chat.txt"));
     type.push(payload);
-    fs.writeFile("chat.txt", JSON.stringify(type), (err) => {
+    fs.writeFile("chat.txt", JSON.stringify(type), async (err) => {
       if (err) {
         console.log(err);
-      } else {
-        fs.readFile("chat.txt", "utf-8", async (err, data) => {
-          if (err) {
-            console.log(err);
-          }
-          const msj = await JSON.parse(data);
-          return io.emit("chat", msj);
-        });
       }
+      socket.emit("chat", type);
     });
+
+
   });
+  socket.emit("chat", await JSON.parse(fs.readFileSync("chat.txt")));
 });
 
 const port = process.env.PORT || 8080;
