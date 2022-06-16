@@ -1,5 +1,4 @@
 let socket = io();
-
 const msg = document.querySelector("#msg");
 const btnChat = document.querySelector("#chatBtn");
 const chat = document.querySelector("#chat");
@@ -12,11 +11,9 @@ form.addEventListener("submit", (e) => {
   if (email.value === "" || msg.value === "") {
     alert("Email and message are required");
   } else {
-    console.log(socket.io);
     socket.emit("chat", {
       email: email.value,
       msg: msg.value,
-      date: new Date().toLocaleString(),
     });
     msg.value = "";
   }
@@ -67,7 +64,7 @@ socket.on("new-products", () => {
           let td4 = document.createElement("th");
           td4.setAttribute("scope", "row");
           let img = document.createElement("img");
-          img.src = product.thumbnail;
+          img.src = product.img;
           img.style.width = "80px";
           img.style.height = "80px";
           td2.innerText = product.title;
@@ -90,11 +87,12 @@ socket.on("chat", () => {
     })
     .then((data) => {
       chat.innerHTML = "";
+
       data.forEach((dato) => {
         return (chat.innerHTML += `<div class="card">
         <div class="card-header bg-light">
           <h5 class="card-title text-primary">${dato.email}</h5>
-          <h6 class="card-subtitle bg-light text-success mb-2  ">${dato.date}</h6>
+          <h6 class="card-subtitle bg-light text-success mb-2  ">${dato.fecha}</h6>
         </div>
         <div class="card-body bg-dark">
           <p class="card-text text-warning bg-dark">${dato.msg}</p>
@@ -104,3 +102,5 @@ socket.on("chat", () => {
       });
     });
 });
+
+//${dato.date}- ${dato.hour} COLOCAR ESTO EN DONDE VA DATO.FECHA SI NO FUNCIONA

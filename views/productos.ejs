@@ -36,18 +36,18 @@
         </tr>
       </thead>
       <tbody>
-    <% type.forEach( (producto) => { %>
+    <% producto.forEach( (item) => { %>
       <tr class="text-center">
-        <th scope="row"><%= producto.id %></th>
+        <th scope="row"><%= item.id %></th>
         <td> 
           <h5>
-          <%= producto.title %>
+          <%= item.title %>
         </h5>
         </td>
-        <td> <h5>$<%= producto.price %></h5> </td>
+        <td> <h5>$<%= item.price %></h5> </td>
         <td>
           <img
-            src=<%= producto.thumbnail %>
+            src=<%= item.img %>
             alt="789"
             style="width:50%; height: 200px; margin-left: 21px;"
           />

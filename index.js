@@ -1,16 +1,21 @@
+require("dotenv").config();
+const { db } = require("./db/db");
+const { liteDb } = require("./db/liteDb");
+const dbProductos = require("./models/products");
+const dbMensajes = require("./models/chat");
+const itemService = new dbProductos(db, "productos");
+const chatService = new dbMensajes(liteDb, "mensajes");
+const scriptCreateTables = require("./scriptCreateTables");
+scriptCreateTables.tablesCreation();
 const express = require("express");
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const fs = require("fs").promises;
 const path = require("path");
-const { customAlphabet } = require("nanoid");
-const nanoid = customAlphabet("1234567890", 5);
 const productosRouter = require("./routes/productosRouter");
 const chatRouter = require("./routes/chatRouter");
-require("dotenv").config();
 
 app.set("view engine", "ejs");
 app.set("views", "./views");
@@ -21,53 +26,30 @@ app.use("/api/productos", productosRouter);
 app.use("/api/chat", chatRouter);
 
 app.get("/", (req, res) => {
-  fs.readFile("productos.txt", "utf-8").then((productos) => {
-    res.render("form", { productos: JSON.parse(productos) });
-  });
-});
-
-app.get("/:id", (req, res) => {
-  fs.readFile("productos.txt", "utf-8").then((data) => {
-    const type = JSON.parse(data);
-    const producto = type.find((producto) => producto.id === req.params.id);
-    res.render("form", {
-      producto,
-    });
-  });
+  return res.render("form");
 });
 
 app.post("/", async (req, res) => {
-  const productos = await fs.readFile("productos.txt", "utf-8");
-  const producto = JSON.parse(productos);
-  const newProducto = {
-    id: nanoid(),
-    price: req.body.price,
-    title: req.body.title,
-    thumbnail: req.body.thumbnail,
+  const { title, price, img } = req.body;
+  const producto = {
+    title,
+    price,
+    img,
   };
-  producto.push(newProducto);
-  await fs.writeFile("productos.txt", JSON.stringify(producto));
-  res.render("form", {
-    productos: producto,
+  const productoInKnex = await itemService.createTheProducts(producto);
+  return res.render("form", {
+    productoInKnex,
   });
 });
 
 io.on("connection", async (socket) => {
-  const fs = require("fs");
-  const type = await JSON.parse(fs.readFileSync("productos.txt"));
-  socket.emit("new-products", type);
+  socket.emit("new-products", await itemService.getTheProducts());
+
   socket.on("chat", async (payload) => {
-    const fs = require("fs");
-    const type = await JSON.parse(fs.readFileSync("chat.txt"));
-    type.push(payload);
-    fs.writeFile("chat.txt", JSON.stringify(type), async (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
-    io.emit("chat", payload);
+    const mensaje = await chatService.createMessages(payload);
+    socket.emit("chat", mensaje);
   });
-  socket.emit("chat", await JSON.parse(fs.readFileSync("chat.txt")));
+  socket.emit("chat", await chatService.getMessages());
 });
 
 const port = process.env.PORT || 8080;

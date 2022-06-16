@@ -1,48 +1,25 @@
 const express = require("express");
-const Productos = require("../api");
 const router = express.Router();
-const itemService = new Productos("productos.txt");
+ 
+const {
+  getAllProducts,
+  getProduct,
+  makeProduct,
+  removeProduct,
+  removeProducts,
+  updatingProduct,
+} = require("../controllers/products");
 
-router.get("/", async (req, res) => {
-  res.json(await itemService.obtenerProductos());
-});
+router.get("/", getAllProducts);
 
-router.post("/", async (req, res) => {
-  if (!req.body.title && !req.body.price && !req.body.thumbnail) {
-    res.status(400).json({
-      error: "Bad Request",
-      message: "Title, price and thumbnail are required",
-    });
-  }
-  const producto = itemService.create(req.body);
-  res.json(await producto);
-});
+router.get("/:id", getProduct);
 
-router.put("/", async (req, res) => {
-  const producto = itemService.actualizarTodos();
-  res.json(await producto);
-});
+router.post("/", makeProduct);
 
-router.delete("/", async (req, res) => {
-  itemService.eliminarTodos();
-  res.json({ message: "Product removed" });
-});
+router.patch("/:id", updatingProduct);
 
-router.get("/:id", async (req, res) => {
-  const producto = await itemService.obtenerProducto(req.params.id);
-  res.json(producto);
-});
+router.delete("/", removeProducts);
 
-router.put("/:id", async (req, res) => {
-  const id = req.params.id;
-  const producto = itemService.actualizarProducto(id, req.body);
-  res.json(await producto);
-});
-
-router.delete("/:id", async (req, res) => {
-  const id = req.params.id;
-  itemService.eliminarProducto(id);
-  res.json({ message: "Product removed" });
-});
+router.delete("/:id", removeProduct);
 
 module.exports = router;
