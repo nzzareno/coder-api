@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
- 
+
 const {
   getAllProducts,
   getProduct,
@@ -8,9 +8,15 @@ const {
   removeProduct,
   removeProducts,
   updatingProduct,
+  getFakerProducts,
+  postFakerProducts
 } = require("../controllers/products");
 
 router.get("/", getAllProducts);
+
+router.get("/test",  getFakerProducts);
+
+router.post("/test",  postFakerProducts);
 
 router.get("/:id", getProduct);
 

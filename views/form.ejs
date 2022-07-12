@@ -10,6 +10,7 @@
       integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
       crossorigin="anonymous"
     />
+    <script src="https://cdn.jsdelivr.net/npm/normalizr@3.6.1/dist/normalizr.browser.min.js"></script>
     <title>MVC EJS products</title>
     <style>
       input::-webkit-outer-spin-button,
@@ -21,8 +22,10 @@
         -moz-appearance: textfield;
       }
       .container {
-        margin-top: 277px;
+        /* margin-top: 277px; */
       }
+
+      .avatar { width: 70px;}
 
       @media screen and (max-width: 940px) {
         .container {
@@ -35,7 +38,7 @@
     </style>
   </head>
   <body class="container-fluid">
-    <h1
+    <!-- <h1
       style="
         font-family: arial;
         font-weight: 700;
@@ -45,7 +48,7 @@
       "
       class="mb-4 bg-dark text-white"
     >
-      WELCOME, FEEL FREE TO ENTER YOUR PRODUCT!
+      WELCOME, FEEL FREE TO SHOW YOUR PRODUCT!
     </h1>
 
     <form id="formx" action="/" method="POST">
@@ -90,14 +93,11 @@
       >
         SEND TO LIST
       </button>
-    </form>
+    </form> -->
+ 
+    <%- include ('fakerTable') %>  
+    <%- include ('chat') %>  
 
-    <table class="table mt-5 container">
-      <thead class="table-warning"></thead>
-      <tbody></tbody>
-    </table>
-
-    <%- include ('chat') %>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"

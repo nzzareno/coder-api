@@ -5,20 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/normalizr@3.6.1/dist/normalizr.browser.min.js"></script>
     <style>
-      .divchat {
-        width: 100%;
-        height: 56.7vh;
- 
-        overflow: auto;
-        margin-top: 7%;
-       
-      }
+      
     </style>
   </head>
-  <body class="container" style="min-height: 100vh;">
-    <div class=" bg-light divchat">
-      <h2 class="text-dark  bg-light ms-2 fs-2">MESSAGE CENTER</h2>
+  <body class="container-fluid" >
+   
+    <div class="bg-light divchat">
+      <h2 class="text-primary bg-light ms-2 fs-2">MESSAGE CENTER</h2>
+      <h2 class="text-primary bg-dark ms-2 fs-2 titleCompress">
+
+      </h2>
       <div class="text-center bg-light">
         <form action="/" method="POST" id="form">
           <input
@@ -30,6 +28,61 @@
             name="email"
             placeholder="Enter your email"
             id="email"
+          />
+
+          <input
+            style="outline: none; border: none"
+            class="form-control shadow-none fs-4 text-dark bg-light mb-3 w-100"
+            type="text"
+            maxlength="150"
+            required
+            name="name"
+            placeholder="Enter your name"
+            id="name"
+          />
+
+          <input
+            style="outline: none; border: none"
+            class="form-control shadow-none fs-4 text-dark bg-light mb-3 w-100"
+            type="text"
+            maxlength="150"
+            required
+            name="lastname"
+            placeholder="Enter your lastname"
+            id="lastname"
+          />
+
+          <input
+            style="outline: none; border: none"
+            class="form-control shadow-none fs-4 text-dark bg-light mb-3 w-100"
+            type="number"
+            maxlength="150"
+            required
+            name="age"
+            placeholder="Enter your age"
+            id="age"
+          />
+
+          <input
+            style="outline: none; border: none"
+            class="form-control shadow-none fs-4 text-dark bg-light mb-3 w-100"
+            type="text"
+            maxlength="150"
+            required
+            name="alias"
+            placeholder="Enter your alias"
+            id="alias"
+          />
+
+          <input
+            style="outline: none; border: none"
+            class="form-control shadow-none fs-4 text-dark bg-light mb-3 w-100"
+            type="url"
+            maxlength="150"
+            required
+            name="avatar"
+            placeholder="Enter your avatar"
+            id="avatar"
           />
 
           <input
@@ -55,7 +108,11 @@
         <br />
       </div>
       <div>
-        <ul class="text-dark" id="chat" style="font-weight: bold; margin-top:3%;"></ul>
+        <ul
+          class="text-dark"
+          id="chat"
+          style="font-weight: bold; margin-top: 3%"
+        ></ul>
       </div>
     </div>
     <script

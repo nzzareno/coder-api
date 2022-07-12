@@ -1,12 +1,13 @@
 require("dotenv").config();
-const { db } = require("./db/db");
-const { liteDb } = require("./db/liteDb");
+const { ProductModel } = require("./db/db");
+const { ChatModel } = require("./db/db");
+// require("./db/config");
 const dbProductos = require("./models/products");
 const dbMensajes = require("./models/chat");
-const itemService = new dbProductos(db, "productos");
-const chatService = new dbMensajes(liteDb, "mensajes");
-const scriptCreateTables = require("./scriptCreateTables");
-scriptCreateTables.tablesCreation();
+const itemService = new dbProductos("productos.json");
+const chatService = new dbMensajes("chat.json");
+// const scriptCreateTables = require("./scriptCreateTables");
+// scriptCreateTables.tablesCreation();
 const express = require("express");
 const app = express();
 const http = require("http");
@@ -43,7 +44,9 @@ app.post("/", async (req, res) => {
 });
 
 io.on("connection", async (socket) => {
-  socket.emit("new-products", await itemService.getTheProducts());
+  // socket.emit("new-products", await itemService.getTheProducts());
+
+  socket.emit("goodFaker", await itemService.getFakeProducts());
 
   socket.on("chat", async (payload) => {
     const mensaje = await chatService.createMessages(payload);

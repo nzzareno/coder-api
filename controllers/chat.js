@@ -1,8 +1,6 @@
 const Mensajes = require("../models/chat");
-const scriptCreateTables = require("../scriptCreateTables");
-scriptCreateTables.tablesCreation();
-const { liteDb } = require("../db/liteDb");
-const chatService = new Mensajes(liteDb, "mensajes");
+// const { ChatModel } = require("../db/db");
+const chatService = new Mensajes("chat.json");
 
 const getChats = async (req, res) => {
   try {
@@ -22,6 +20,7 @@ const getChat = async (req, res) => {
     return res.status(400).json({ message: "Error getting the message" });
   }
 };
+
 const createChat = async (req, res) => {
   try {
     await chatService.createMessages(req.body);

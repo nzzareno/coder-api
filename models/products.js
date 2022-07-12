@@ -1,24 +1,46 @@
-const knex = require("knex");
+const faker = require("faker");
+const fs = require("fs").promises;
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890", 5);
 
 class Productos {
-  constructor(config, table) {
-    this.db = knex(config);
-    this.table = table;
+  constructor(path) {
+    this.path = path;
+  }
+
+  async fileInJSON() {
+    let fileTxt = await fs.readFile(this.path, "utf-8");
+    let type = JSON.parse(fileTxt);
+    return type;
+  }
+
+  async fileSaving(item) {
+    let type = JSON.stringify(item);
+    await fs.writeFile(this.path, type);
   }
 
   async getTheProducts() {
     try {
-      const savedProducts = await this.db.from(this.table).select("*");
-      const productitos = [];
-      savedProducts.map((product) => {
-        productitos.push({
-          id: product.id,
-          title: product.title,
-          price: product.price,
-          img: product.img,
-        });
-      });
-      return productitos;
+      const elements = await this.fileInJSON();
+      return elements;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async getFakeProducts() {
+    try {
+      const fakeProducts = [];
+      for (let i = 0; i < 5; i++) {
+        const fakeProduct = {
+          id: i + 1,
+          title: faker.commerce.productName(),
+          price: faker.commerce.price(),
+          img: faker.image.imageUrl(),
+        };
+        fakeProducts.push(fakeProduct);
+      }
+      return fakeProducts;
     } catch (error) {
       return [];
     }
@@ -26,9 +48,14 @@ class Productos {
 
   async createTheProducts(data) {
     try {
-      await this.db.from(this.table).insert(data);
-      const maxId = this.db.from(this.table).max("id");
-      return maxId;
+      const newProduct = {
+        id: nanoid(),
+        title: data.title,
+        price: data.price,
+        img: data.img,
+      };
+      await this.fileSaving(newProduct);
+      return newProduct;
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -37,8 +64,9 @@ class Productos {
 
   async getOneProduct(id) {
     try {
-      const product = await this.db.from(this.table).where("id", id);
-      return product;
+      const product = await this.fileInJSON();
+      const newProduct = product.find((element) => element.id == id);
+      return newProduct;
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -47,7 +75,11 @@ class Productos {
 
   async updateOneProduct(id, data) {
     try {
-      await this.db.from(this.table).where("id", id).update(data);
+      const product = await this.fileInJSON();
+      const newProduct = product.find((element) => element.id == id);
+      const index = product.indexOf(newProduct);
+      product[index] = data;
+      await this.fileSaving(product);
       return true;
     } catch (e) {
       console.error(e);
@@ -57,8 +89,7 @@ class Productos {
 
   async deleteAllProducts() {
     try {
-      await this.db.from(this.table).del();
-      return true;
+      await this.fileSaving([]);
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -67,8 +98,11 @@ class Productos {
 
   async deleteOneProduct(id) {
     try {
-      await this.db.from(this.table).where("id", id).del();
-      return true;
+      const product = await this.fileInJSON();
+      const newProduct = product.find((element) => element.id == id);
+      const index = product.indexOf(newProduct);
+      product.splice(index, 1);
+      await this.fileSaving(product);
     } catch (e) {
       console.error(e);
       throw new Error();
