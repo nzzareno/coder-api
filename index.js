@@ -1,14 +1,14 @@
 require("dotenv").config();
 const { ProductModel } = require("./db/db");
 const { ChatModel } = require("./db/db");
-// require("./db/config");
+require("./db/config");
 const dbProductos = require("./models/products");
 const dbMensajes = require("./models/chat");
-const itemService = new dbProductos("productos.json");
-const chatService = new dbMensajes("chat.json");
-// const scriptCreateTables = require("./scriptCreateTables");
-// scriptCreateTables.tablesCreation();
+const itemService = new dbProductos(ProductModel);
+const chatService = new dbMensajes(ChatModel);
 const express = require("express");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const app = express();
 const http = require("http");
 const server = http.createServer(app);
@@ -20,6 +20,19 @@ const chatRouter = require("./routes/chatRouter");
 
 app.set("view engine", "ejs");
 app.set("views", "./views");
+
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      ttl: 10,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +40,7 @@ app.use("/api/productos", productosRouter);
 app.use("/api/chat", chatRouter);
 
 app.get("/", (req, res) => {
-  return res.render("form");
+  return res.render("login");
 });
 
 app.post("/", async (req, res) => {
@@ -43,10 +56,31 @@ app.post("/", async (req, res) => {
   });
 });
 
-io.on("connection", async (socket) => {
-  // socket.emit("new-products", await itemService.getTheProducts());
+app.get("/home", (req, res) => {
+  console.log(req.session.user);
+  if (req.session.user) {
+    return res.render("form", {
+      user: req.session.user,
+      sessions: req.session,
+    });
+  }
+  return res.redirect("/");
+});
 
-  socket.emit("goodFaker", await itemService.getFakeProducts());
+app.post("/login", async (req, res) => {
+  req.session.user = req.body.user;
+  return res.redirect("/home");
+});
+
+app.get("/logout", async (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+});
+
+io.on("connection", async (socket) => {
+  socket.emit("new-products", await itemService.getTheProducts());
+
+  // socket.emit("goodFaker", await itemService.getFakeProducts());
 
   socket.on("chat", async (payload) => {
     const mensaje = await chatService.createMessages(payload);
@@ -55,7 +89,7 @@ io.on("connection", async (socket) => {
   socket.emit("chat", await chatService.getMessages());
 });
 
-const port = process.env.PORT || 8080;
+const port = 8081;
 server
   .listen(port, () => {
     console.log(`App listening on port ${port}!`);

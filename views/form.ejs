@@ -25,7 +25,9 @@
         /* margin-top: 277px; */
       }
 
-      .avatar { width: 70px;}
+      .avatar {
+        width: 70px;
+      }
 
       @media screen and (max-width: 940px) {
         .container {
@@ -38,18 +40,25 @@
     </style>
   </head>
   <body class="container-fluid">
-    <!-- <h1
-      style="
-        font-family: arial;
-        font-weight: 700;
-        line-height: 60px;
-        height: 60px;
-        text-align: center;
-      "
-      class="mb-4 bg-dark text-white"
-    >
-      WELCOME, FEEL FREE TO SHOW YOUR PRODUCT!
-    </h1>
+    <div class="w-100 bg-warning text-dark text-center">
+      <h4
+        style="
+          font-family: arial;
+          font-weight: 700;
+          line-height: 60px;
+          height: 60px;
+          text-align: center;
+        "
+        class="bg-dark text-white"
+      >
+        Welcome <%= user %>
+      </h4>
+      <input
+        type="submit"
+        value="Disconnect"
+        onclick="location.href='/logout'"
+      />
+    </div>
 
     <form id="formx" action="/" method="POST">
       <div class="mb-3">
@@ -93,10 +102,14 @@
       >
         SEND TO LIST
       </button>
-    </form> -->
- 
-    <%- include ('fakerTable') %>  
-    <%- include ('chat') %>  
+    </form>
+
+    <table class="table">
+      <thead class="table-dark"></thead>
+      <tbody></tbody>
+    </table>
+
+    <%- include ('chat') %>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"

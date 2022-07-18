@@ -1,28 +1,14 @@
 const faker = require("faker");
-const fs = require("fs").promises;
-const { customAlphabet } = require("nanoid");
-const nanoid = customAlphabet("1234567890", 5);
 
 class Productos {
-  constructor(path) {
-    this.path = path;
-  }
-
-  async fileInJSON() {
-    let fileTxt = await fs.readFile(this.path, "utf-8");
-    let type = JSON.parse(fileTxt);
-    return type;
-  }
-
-  async fileSaving(item) {
-    let type = JSON.stringify(item);
-    await fs.writeFile(this.path, type);
+  constructor(schema) {
+    this.schema = schema;
   }
 
   async getTheProducts() {
     try {
-      const elements = await this.fileInJSON();
-      return elements;
+      const product = await this.schema.find();
+      return product;
     } catch (error) {
       return [];
     }
@@ -49,13 +35,12 @@ class Productos {
   async createTheProducts(data) {
     try {
       const newProduct = {
-        id: nanoid(),
         title: data.title,
         price: data.price,
         img: data.img,
       };
-      await this.fileSaving(newProduct);
-      return newProduct;
+
+      await this.schema.create(newProduct);
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -64,9 +49,8 @@ class Productos {
 
   async getOneProduct(id) {
     try {
-      const product = await this.fileInJSON();
-      const newProduct = product.find((element) => element.id == id);
-      return newProduct;
+      const product = await this.schema.find({ _id: id });
+      return product;
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -75,12 +59,15 @@ class Productos {
 
   async updateOneProduct(id, data) {
     try {
-      const product = await this.fileInJSON();
-      const newProduct = product.find((element) => element.id == id);
-      const index = product.indexOf(newProduct);
-      product[index] = data;
-      await this.fileSaving(product);
-      return true;
+      const element = await this.schema.updateOne(
+        { _id: id },
+        {
+          title: data.title,
+          price: data.price,
+          img: data.img,
+        }
+      );
+      return element;
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -89,7 +76,7 @@ class Productos {
 
   async deleteAllProducts() {
     try {
-      await this.fileSaving([]);
+      await this.schema.deleteMany({});
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -98,11 +85,8 @@ class Productos {
 
   async deleteOneProduct(id) {
     try {
-      const product = await this.fileInJSON();
-      const newProduct = product.find((element) => element.id == id);
-      const index = product.indexOf(newProduct);
-      product.splice(index, 1);
-      await this.fileSaving(product);
+      const element = await this.schema.deleteOne({ _id: id });
+      return element;
     } catch (e) {
       console.error(e);
       throw new Error();

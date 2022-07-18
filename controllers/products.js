@@ -1,6 +1,6 @@
 const Productos = require("../models/products");
-// const { ProductModel } = require("../db/db");
-const itemService = new Productos("productos.json");
+const { ProductModel } = require("../db/db");
+const itemService = new Productos(ProductModel);
 
 const getAllProducts = async (req, res) => {
   try {
@@ -17,17 +17,6 @@ const getFakerProducts = async (req, res) => {
     return res.status(200).json(fakerP);
   } catch (error) {
     return res.status(400).json({ message: "Error getting the products" });
-  }
-};
-
-const postFakerProducts = async (req, res) => {
-  try {
-    await itemService.createFakeProducts();
-    return res.status(201).json({
-      message: "Products created",
-    });
-  } catch (error) {
-    return res.status(400).json({ message: "Error creating the products" });
   }
 };
 
@@ -93,5 +82,4 @@ module.exports = {
   removeProducts,
   updatingProduct,
   getFakerProducts,
-  postFakerProducts,
 };

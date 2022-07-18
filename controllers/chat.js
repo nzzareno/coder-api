@@ -1,6 +1,6 @@
 const Mensajes = require("../models/chat");
-// const { ChatModel } = require("../db/db");
-const chatService = new Mensajes("chat.json");
+const { ChatModel } = require("../db/db");
+const chatService = new Mensajes(ChatModel);
 
 const getChats = async (req, res) => {
   try {

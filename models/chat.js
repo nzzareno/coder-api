@@ -1,100 +1,32 @@
-const normalizr = require("normalizr");
-const fs = require("fs").promises;
-
 class Mensajes {
-  constructor(path) {
-    this.path = path;
-  }
-
-  async fileInJSON() {
-    let fileTxt = await fs.readFile(this.path, "utf-8");
-    let type = JSON.parse(fileTxt);
-    return type;
-  }
-
-  async fileSaving(item) {
-    let type = JSON.stringify(item);
-    await fs.writeFile(this.path, type);
+  constructor(schema) {
+    this.schema = schema;
   }
 
   async getMessages() {
     try {
-      const elements = await this.fileInJSON();
-
-      const authorSchema = new normalizr.schema.Entity(
-        "author",
-        {
-          id: String,
-          name: String,
-          lastname: String,
-          alias: String,
-          avatar: String,
-          age: String,
-          email: String,
-          fecha: String,
-        },
-        { idAttribute: "email" }
-      );
-
-      const messageSchema = new normalizr.schema.Entity("message", {
-        id: "mensajes",
-      });
-
-      const postedSchema = new normalizr.schema.Object({
-        idAttribute: "id",
-        author: authorSchema,
-        text: String,
-        fecha: String,
-      });
-
-      const postArray = new normalizr.schema.Array(postedSchema);
-
-      const posts = normalizr.normalize(elements, postArray);
-
-      posts.result.map((element) => {
-        element.author = posts.entities.author[element.author];
-      });
-
-      const result = {
-        entities: posts.entities,
-        result: {
-          id: "messages",
-          messages: posts.result,
-        },
-      };
-
-      return result;
+      return await this.schema.find();
     } catch (error) {
       return [];
     }
   }
 
+  async getUser() {}
+
   async createMessages(data) {
     try {
-      const elements = await this.fileInJSON();
-      const date = new Date().toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-      const hour = new Date().toLocaleTimeString();
-      const fecha = `${date} ${hour}`;
       const newMessage = {
-        author: {
-          id: (elements.length + 1).toString(),
-          name: data.name,
-          lastname: data.lastname,
-          alias: data.alias,
-          avatar: data.avatar,
-          age: data.age,
-          email: data.email,
-          fecha: fecha,
-        },
-        text: data.msg,
+        email: data.email,
+        msg: data.msg,
+        name: data.name,
+        age: data.age,
+        lastname: data.lastname,
+        alias: data.alias,
+        avatar: data.avatar,
+        fecha: new Date().toUTCString(),
       };
-      elements.push(newMessage);
-
-      await this.fileSaving(elements);
+      const message = new this.schema(newMessage);
+      await message.save();
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -103,7 +35,7 @@ class Mensajes {
 
   async deleteAllMessages() {
     try {
-      await this.fileSaving([]);
+      return await this.schema.deleteMany({});
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -112,9 +44,8 @@ class Mensajes {
 
   async deleteOneMessage(id) {
     try {
-      const elements = await this.fileInJSON();
-      const newElements = elements.find((element) => element.id == id);
-      await this.fileSaving(newElements);
+      const element = await this.schema.deleteOne({ _id: id });
+      return element;
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -123,9 +54,8 @@ class Mensajes {
 
   async getOneMessage(id) {
     try {
-      const elements = await this.fileInJSON();
-      const newElements = elements.find((element) => element.id == id);
-      return newElements;
+      const element = await this.schema.find({ _id: id });
+      return element;
     } catch (e) {
       console.error(e);
       throw new Error();
@@ -134,11 +64,26 @@ class Mensajes {
 
   async updateOneMessage(id, data) {
     try {
-      const elements = await this.fileInJSON();
-      const newElements = elements.find((element) => element.id == id);
-      const index = elements.indexOf(newElements);
-      elements[index] = data;
-      await this.fileSaving(elements);
+      const elements = await this.schema.find();
+      const newElements = elements.map((message) => {
+        if (message.id == id) {
+          return {
+            ...message,
+            email: data.email,
+            msg: data.msg,
+            name: data.name,
+            age: data.age,
+            lastname: data.lastname,
+            alias: data.alias,
+            avatar: data.avatar,
+          };
+        } else {
+          return message;
+        }
+      });
+      await this.schema.deleteMany({});
+      await this.schema.insertMany(newElements);
+      return newElements;
     } catch (e) {
       console.error(e);
       throw new Error();

@@ -9,14 +9,11 @@ const {
   removeProducts,
   updatingProduct,
   getFakerProducts,
-  postFakerProducts
 } = require("../controllers/products");
 
 router.get("/", getAllProducts);
 
-router.get("/test",  getFakerProducts);
-
-router.post("/test",  postFakerProducts);
+router.get("/test", getFakerProducts);
 
 router.get("/:id", getProduct);
 
