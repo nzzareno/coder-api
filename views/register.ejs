@@ -24,18 +24,17 @@
     ></script>
 
     <style>
-      .login-container {
+      .register-container {
         background-color: #171438;
       }
     </style>
   </head>
-
-  <body class="login-container text-white">
+  <body class="register-container text-white">
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3">
-          <h1 class="text-center text-white">Login</h1>
-          <form action="/login" method="POST">
+          <h1 class="text-center text-white">Register</h1>
+          <form action="/register" method="POST">
             <div class="form-group">
               <label for="email">Email</label>
               <input
@@ -57,15 +56,15 @@
             </div>
             <div class="text-danger"><%= message.join(', ') %></div>
             <button type="submit" class="btn btn-primary w-100 mt-3">
-              Sign in
+              Sign up
             </button>
           </form>
-    
+
           <a
- 
-          class="btn btn-success mt-2 float-left w-100 border-0 shadow-none"
-          href="/register"
-          >Go to Sign up</a
+            class="btn btn-success mt-2 float-left w-100 border-0 shadow-none"
+            href="/login"
+          >
+            Go to Sign in</a
           >
         </div>
       </div>

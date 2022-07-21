@@ -30,7 +30,7 @@ const ChatSchema = mongoose.Schema({
     required: true,
     default: new Date().toUTCString().toString(),
   },
- 
+
   email: { type: String, required: true },
   msg: { type: String, required: true },
   name: { type: String, required: true },
@@ -43,6 +43,8 @@ const ChatSchema = mongoose.Schema({
 });
 
 const ChatModel = mongoose.model("Chat", ChatSchema);
+
+
 
 module.exports = {
   ProductModel,
